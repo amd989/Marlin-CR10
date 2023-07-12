@@ -86,18 +86,18 @@
   #define Y_CS_PIN                          PC11
 #endif
 
-#define Z_ENABLE_PIN                        PB11
-#define Z_STEP_PIN                          PB10
-#define Z_DIR_PIN                           PB2
-#ifndef Z_CS_PIN
-  #define Z_CS_PIN                          PC12
+#define Y2_ENABLE_PIN                        PB11
+#define Y2_STEP_PIN                          PB10
+#define Y2_DIR_PIN                           PB2
+#ifndef Y2_CS_PIN
+  #define Y2_CS_PIN                          PC12
 #endif
 
-#define E0_ENABLE_PIN                       PB1
-#define E0_STEP_PIN                         PB0
-#define E0_DIR_PIN                          PC5
-#ifndef E0_CS_PIN
-  #define E0_CS_PIN                         PD2
+#define Z_ENABLE_PIN                       PB1
+#define Z_STEP_PIN                         PB0
+#define Z_DIR_PIN                          PC5
+#ifndef Z_CS_PIN
+  #define Z_CS_PIN                         PD2
 #endif
 
 //
@@ -131,11 +131,11 @@
   #define Y_SERIAL_TX_PIN                   PC11
   #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
 
-  #define Z_SERIAL_TX_PIN                   PC12
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
+  #define Y2_SERIAL_TX_PIN                  PC12
+  #define Y2_SERIAL_RX_PIN      Y2_SERIAL_TX_PIN
 
-  #define E0_SERIAL_TX_PIN                  PD2
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
+  #define Z_SERIAL_TX_PIN                    PD2
+  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
 
   // Reduce baud rate to improve software serial reliability
   #ifndef TMC_BAUD_RATE
