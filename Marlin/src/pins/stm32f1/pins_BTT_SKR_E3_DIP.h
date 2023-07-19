@@ -48,6 +48,7 @@
 //
 #define X_STOP_PIN                          PC1   // X-STOP
 #define Y_STOP_PIN                          PC0   // Y-STOP
+#define Y2_STOP_PIN                         PC2   // Y-STOP
 #define Z_STOP_PIN                          PC15  // Z-STOP
 
 //
