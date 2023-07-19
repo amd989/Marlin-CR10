@@ -86,18 +86,18 @@
   #define Y_CS_PIN                          PC11
 #endif
 
-#define Y2_ENABLE_PIN                        PB11
-#define Y2_STEP_PIN                          PB10
-#define Y2_DIR_PIN                           PB2
-#ifndef Y2_CS_PIN
-  #define Y2_CS_PIN                          PC12
+#define Z_ENABLE_PIN                        PB11
+#define Z_STEP_PIN                          PB10
+#define Z_DIR_PIN                           PB2
+#ifndef Z_CS_PIN
+  #define Z_CS_PIN                          PC12
 #endif
 
-#define Z_ENABLE_PIN                       PB1
-#define Z_STEP_PIN                         PB0
-#define Z_DIR_PIN                          PC5
-#ifndef Z_CS_PIN
-  #define Z_CS_PIN                         PD2
+#define Y2_ENABLE_PIN                       PB1
+#define Y2_STEP_PIN                         PB0
+#define Y2_DIR_PIN                          PC5
+#ifndef Y2_CS_PIN
+  #define Y2_CS_PIN                         PD2
 #endif
 
 //
