@@ -2595,11 +2595,11 @@
 
 // The number of linear moves that can be in the planner at once.
 #if ALL(HAS_MEDIA, DIRECT_STEPPING)
-  #define BLOCK_BUFFER_SIZE  8
+  #define BLOCK_BUFFER_SIZE 32
 #elif HAS_MEDIA
-  #define BLOCK_BUFFER_SIZE 16
+  #define BLOCK_BUFFER_SIZE 64
 #else
-  #define BLOCK_BUFFER_SIZE 16
+  #define BLOCK_BUFFER_SIZE 64
 #endif
 
 // @section serial
@@ -2670,9 +2670,9 @@
  * - During Hold all Emergency Parser commands are available, as usual.
  * - Enable NANODLP_Z_SYNC and NANODLP_ALL_AXIS for move command end-state reports.
  */
-//#define REALTIME_REPORTING_COMMANDS
+#define REALTIME_REPORTING_COMMANDS
 #if ENABLED(REALTIME_REPORTING_COMMANDS)
-  //#define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC
+  #define FULL_REPORT_TO_HOST_FEATURE   // Auto-report the machine status like Grbl CNC
 #endif
 
 /**
@@ -3573,23 +3573,23 @@
 
   #define SPINDLE_LASER_USE_PWM                // Enable if your controller supports setting the speed/power
   #if ENABLED(SPINDLE_LASER_USE_PWM)
-    #define SPINDLE_LASER_PWM_INVERT    false  // Set to "true" if the speed/power goes up when you want it to go slower
+    #define SPINDLE_LASER_PWM_INVERT    true   // Set to "true" if the speed/power goes up when you want it to go slower
     #define SPINDLE_LASER_FREQUENCY     2500   // (Hz) Spindle/laser frequency (only on supported HALs: AVR, ESP32, and LPC)
                                                // ESP32: If SPINDLE_LASER_PWM_PIN is onboard then <=78125Hz. For I2S expander
                                                //  the frequency determines the PWM resolution. 2500Hz = 0-100, 977Hz = 0-255, ...
                                                //  (250000 / SPINDLE_LASER_FREQUENCY) = max value.
-    #define SPINDLE_LASER_PWM_PIN       HEATER_0_PIN                                           
+    #define SPINDLE_LASER_PWM_PIN       HEATER_0_PIN
   #endif
 
-  //#define AIR_EVACUATION                     // Cutter Vacuum / Laser Blower motor control with G-codes M10-M11
+  #define AIR_EVACUATION                     // Cutter Vacuum / Laser Blower motor control with G-codes M10-M11
   #if ENABLED(AIR_EVACUATION)
-    #define AIR_EVACUATION_ACTIVE       LOW    // Set to "HIGH" if the on/off function is active HIGH
-    //#define AIR_EVACUATION_PIN        42     // Override the default Cutter Vacuum or Laser Blower pin
+    #define AIR_EVACUATION_ACTIVE       HIGH        // Set to "HIGH" if the on/off function is active HIGH
+    #define AIR_EVACUATION_PIN          FAN0_PIN    // Override the default Cutter Vacuum or Laser Blower pin
   #endif
 
-  #define AIR_ASSIST                         // Air Assist control with G-codes M8-M9
+  //#define AIR_ASSIST                           // Air Assist control with G-codes M8-M9
   #if ENABLED(AIR_ASSIST)
-    #define AIR_ASSIST_ACTIVE           LOW          // Active state on air assist pin
+    #define AIR_ASSIST_ACTIVE           HIGH          // Active state on air assist pin
     #define AIR_ASSIST_PIN              FAN0_PIN     // Override the default Air Assist pin
   #endif
 
@@ -3700,7 +3700,7 @@
      * - Ramps the power up every N steps to approximate the speed trapezoid.
      * - Due to the limited power resolution this is only approximate.
      */
-    //#define LASER_POWER_TRAP
+    #define LASER_POWER_TRAP
 
     //
     // Laser I2C Ammeter (High precision INA226 low/high side module)
