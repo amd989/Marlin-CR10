@@ -78,6 +78,17 @@
 #endif
 
 //
+// I/0
+//
+
+#define IO1                                 PD5
+#define IO2                                 PD4
+#define IO3                                 PD3
+#define IO4                                 PD2
+#define IO5                                 PD0
+
+
+//
 // Power-loss Detection
 //
 #ifndef POWER_LOSS_PIN
