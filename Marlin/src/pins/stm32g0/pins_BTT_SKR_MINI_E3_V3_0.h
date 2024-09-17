@@ -118,6 +118,19 @@
 #define E0_STEP_PIN                         PB3
 #define E0_DIR_PIN                          PB4
 
+// MMU
+#define E1_ENABLE_PIN                       PD1
+#define E1_STEP_PIN                         PB3
+#define E1_DIR_PIN                          PB4
+
+#define E2_ENABLE_PIN                       PD1
+#define E2_STEP_PIN                         PB3
+#define E2_DIR_PIN                          PB4
+
+#define E3_ENABLE_PIN                       PD1
+#define E3_STEP_PIN                         PB3
+#define E3_DIR_PIN                          PB4
+
 #if HAS_TMC_UART
   /**
    * TMC220x stepper drivers
