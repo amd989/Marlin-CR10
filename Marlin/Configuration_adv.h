@@ -940,7 +940,7 @@
 //#define XY_COUNTERPART_BACKOFF_MM 0         // (mm) Backoff X after homing Y, and vice-versa
 
 //#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
-#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
+#define HOME_Y_BEFORE_X                       // If G28 contains XY home Y before X
 //#define HOME_Z_FIRST                        // Home Z first. Requires a real endstop (not a probe).
 //#define CODEPENDENT_XY_HOMING               // If X/Y can't home without homing Y/X first
 
@@ -4409,7 +4409,7 @@
    */
   #define E_MUX0_PIN IO1  // Always Required
   #define E_MUX1_PIN IO2  // Needed for 3 to 8 inputs
-  //#define E_MUX2_PIN IO3  // Needed for 5 to 8 inputs
+  #define E_MUX2_PIN IO3  // Needed for 5 to 8 inputs
 
 #elif HAS_PRUSA_MMU2 || HAS_PRUSA_MMU3
   // Common settings for MMU2/MMU2S/MMU3
