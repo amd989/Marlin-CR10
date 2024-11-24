@@ -21,6 +21,8 @@
  */
 #pragma once
 
+#define CONFIG_EXAMPLES_DIR "Malyan/M200"
+
 /**
  * Configuration_adv.h
  *
@@ -338,15 +340,15 @@
 /**
  * Thermal Protection parameters for the bed are just as above for hotends.
  */
-#if TEMP_SENSOR_BED && ENABLED(THERMAL_PROTECTION_BED)
-  #define THERMAL_PROTECTION_BED_PERIOD        20 // (seconds)
-  #define THERMAL_PROTECTION_BED_HYSTERESIS     2 // (°C)
+#if ENABLED(THERMAL_PROTECTION_BED)
+  #define THERMAL_PROTECTION_BED_PERIOD        50 // Seconds
+  #define THERMAL_PROTECTION_BED_HYSTERESIS     2 // Degrees Celsius
 
   /**
    * As described above, except for the bed (M140/M190/M303).
    */
-  #define WATCH_BED_TEMP_PERIOD                60 // (seconds)
-  #define WATCH_BED_TEMP_INCREASE               2 // (°C)
+  #define WATCH_BED_TEMP_PERIOD                90 // Seconds
+  #define WATCH_BED_TEMP_INCREASE               2 // Degrees Celsius
 #endif
 
 /**
@@ -689,7 +691,9 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-#define E0_AUTO_FAN_PIN -1
+//#define FAN0_PIN MALYAN_FAN1_PIN // Malyan M200: uncomment if you use FAN1 to cool the part and FAN2 to cool the extruder
+//#define E0_AUTO_FAN_PIN MALYAN_FAN2_PIN // Malyan M200: uncomment if you use FAN1 to cool the part and FAN2 to cool the extruder
+#define E0_AUTO_FAN_PIN MALYAN_FAN1_PIN // Malyan M200: uncomment if you use FAN1 to cool the extruder and the part (original)
 #define E1_AUTO_FAN_PIN -1
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1
@@ -939,7 +943,7 @@
 //#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (linear=mm, rotational=°) Backoff from endstops after homing
 //#define XY_COUNTERPART_BACKOFF_MM 0         // (mm) Backoff X after homing Y, and vice-versa
 
-//#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
+#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
 //#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
 //#define HOME_Z_FIRST                        // Home Z first. Requires a real endstop (not a probe).
 //#define CODEPENDENT_XY_HOMING               // If X/Y can't home without homing Y/X first
@@ -964,7 +968,7 @@
 
   // Safety: The probe needs time to recognize the command.
   //         Minimum command delay (ms). Enable and increase if needed.
-  //#define BLTOUCH_DELAY 500
+  #define BLTOUCH_DELAY 300
 
   /**
    * Settings for BLTOUCH Classic 1.2, 1.3 or BLTouch Smart 1.0, 2.0, 2.2, 3.0, 3.1, and most clones:
@@ -1011,7 +1015,7 @@
    *
    * Set the default state here, change with 'M401 S' or UI, use M500 to save, M502 to reset.
    */
-  //#define BLTOUCH_HS_MODE true
+  #define BLTOUCH_HS_MODE true
 
   #ifdef BLTOUCH_HS_MODE
     // The probe Z offset (M851 Z) is the height at which the probe triggers.
@@ -1079,7 +1083,7 @@
 
   // On a 300mm bed a 5% grade would give a misalignment of ~1.5cm
   #define G34_MAX_GRADE              5    // (%) Maximum incline that G34 will handle
-  #define Z_STEPPER_ALIGN_ITERATIONS 5    // Number of iterations to apply during alignment
+  #define Z_STEPPER_ALIGN_ITERATIONS 3    // Number of iterations to apply during alignment
   #define Z_STEPPER_ALIGN_ACC        0.02 // Stop iterating early if the accuracy is better than this
   #define RESTORE_LEVELING_AFTER_G34      // Restore leveling after G34 is done?
   // After G34, re-home Z (G28 Z) or just calculate it from the last probe heights?
@@ -1835,13 +1839,13 @@
 
   // Allow international symbols in long filenames. To display correctly, the
   // LCD's font must contain the characters. Check your selected LCD language.
-  //#define UTF_FILENAME_SUPPORT
+  #define UTF_FILENAME_SUPPORT
 
-  //#define LONG_FILENAME_HOST_SUPPORT    // Get the long filename of a file/folder with 'M33 <dosname>' and list long filenames with 'M20 L'
+  #define LONG_FILENAME_HOST_SUPPORT    // Get the long filename of a file/folder with 'M33 <dosname>' and list long filenames with 'M20 L'
   //#define LONG_FILENAME_WRITE_SUPPORT   // Create / delete files with long filenames via M28, M30, and Binary Transfer Protocol
-  //#define M20_TIMESTAMP_SUPPORT         // Include timestamps by adding the 'T' flag to M20 commands
+  #define M20_TIMESTAMP_SUPPORT         // Include timestamps by adding the 'T' flag to M20 commands
 
-  //#define SCROLL_LONG_FILENAMES         // Scroll long filenames in the SD card menu
+  #define SCROLL_LONG_FILENAMES         // Scroll long filenames in the SD card menu
 
   //#define SD_ABORT_NO_COOLDOWN          // Leave the heaters on after Stop Print (not recommended!)
 
@@ -1942,7 +1946,7 @@
    *
    * :[ 'LCD', 'ONBOARD', 'CUSTOM_CABLE' ]
    */
-  //#define SDCARD_CONNECTION LCD
+  #define SDCARD_CONNECTION ONBOARD
 
   // Enable if SD detect is rendered useless (e.g., by using an SD extender)
   //#define NO_SD_DETECT
@@ -2335,7 +2339,7 @@
  *
  * See https://marlinfw.org/docs/features/lin_advance.html for full instructions.
  */
-//#define LIN_ADVANCE
+#define LIN_ADVANCE
 #if ENABLED(LIN_ADVANCE)
   #if ENABLED(DISTINCT_E_FACTORS)
     #define ADVANCE_K { 0.22 }    // (mm) Compression length per 1mm/s extruder speed, per extruder
@@ -2581,7 +2585,7 @@
 
 /**
  * Minimum stepper driver pulse width (in ns)
- * If undefined, these defaults (from Conditionals-4-adv.h) apply:
+ * If undefined, these defaults (from Conditionals_adv.h) apply:
  *     100 : Minimum for TMC2xxx stepper drivers
  *     500 : Minimum for LV8729
  *    1000 : Minimum for A4988 and A5984 stepper drivers
@@ -2595,7 +2599,7 @@
 
 /**
  * Maximum stepping rate (in Hz) the stepper driver allows
- * If undefined, these defaults (from Conditionals-4-adv.h) apply:
+ * If undefined, these defaults (from Conditionals_adv.h) apply:
  *  5000000 : Maximum for TMC2xxx stepper drivers
  *  1000000 : Maximum for LV8729 stepper driver
  *   500000 : Maximum for A4988 stepper driver
@@ -3912,7 +3916,7 @@
 /**
  * Extra options for the M114 "Current Position" report
  */
-//#define M114_DETAIL         // Use 'M114` for details to check planner calculations
+#define M114_DETAIL         // Use 'M114` for details to check planner calculations
 //#define M114_REALTIME       // Real current position based on forward kinematics
 //#define M114_LEGACY         // M114 used to synchronize on every call. Enable if needed.
 
@@ -3967,7 +3971,7 @@
 /**
  * Support for MeatPack G-code compression (https://github.com/scottmudge/OctoPrint-MeatPack)
  */
-//#define MEATPACK_ON_SERIAL_PORT_1
+#define MEATPACK_ON_SERIAL_PORT_1
 //#define MEATPACK_ON_SERIAL_PORT_2
 
 //#define GCODE_CASE_INSENSITIVE  // Accept G-code sent to the firmware in lowercase

@@ -91,3 +91,8 @@
 #define MALYAN_FAN2_PIN                     PB3   // FAN2 header on board - CONTROLLER FAN
 
 #define FAN1_PIN                 MALYAN_FAN2_PIN
+
+
+// JP Header
+#define UART2_TX_PIN                        PA2
+#define UART2_RX_PIN                        PA3
