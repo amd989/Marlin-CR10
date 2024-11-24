@@ -1318,7 +1318,7 @@
  * Override with M92 (when enabled below)
  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 100, 100, 800, 392.79 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 100, 100, 400, 424.9 } 
 
 /**
  * Enable support for M92. Disable to save at least ~530 bytes of flash.
@@ -1663,7 +1663,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { -29, -3, 0 }
+#define NOZZLE_TO_PROBE_OFFSET { -31.8, -40.5, 0 }  // Sprite Extruder
 
 // Enable and set to use a specific tool for probing. Disable to allow any tool.
 #define PROBING_TOOL 0
