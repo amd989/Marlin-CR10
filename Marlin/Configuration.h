@@ -116,7 +116,8 @@
  * Currently Ethernet (-2) is only supported on Teensy 4.1 boards.
  * :[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
  */
-//#define SERIAL_PORT_2 2
+//#define SERIAL_PORT_2 1
+#define LCD_SERIAL_PORT 2
 //#define BAUDRATE_2 250000   // Enable to override BAUDRATE
 
 /**
@@ -3141,7 +3142,7 @@
 //
 // Connect to EXP1 on RAMPS and compatible boards.
 //
-#define CR10_STOCKDISPLAY
+//#define CR10_STOCKDISPLAY
 
 //
 // Ender-2 OEM display, a variant of the MKS_MINI_12864
@@ -3292,7 +3293,7 @@
 //
 // Touch-screen LCD for Malyan M200/M300 printers
 //
-//#define MALYAN_LCD
+#define MALYAN_LCD
 
 //
 // Touch UI for FTDI EVE (FT800/FT810) displays
