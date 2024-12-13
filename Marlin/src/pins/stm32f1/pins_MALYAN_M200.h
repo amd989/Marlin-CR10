@@ -98,3 +98,6 @@
 // JP Header
 #define UART2_TX_PIN                        PA2
 #define UART2_RX_PIN                        PA3
+
+// Servo
+#define SERVO0_PIN                 UART2_TX_PIN
