@@ -58,11 +58,18 @@ namespace ExtUI {
     write_to_lcd(F("{SYS:STARTED}\r\n"));
 
     // send a version that says "unsupported"
-    write_to_lcd(F("{VER:99}\r\n"));
+    write_to_lcd(F("{VER:58}\r\n"));
 
     // No idea why it does this twice.
     write_to_lcd(F("{SYS:STARTED}\r\n"));
     update_usb_status(true);
+
+    #ifdef WIFI_SSID
+      // Set default WIFI Credentials for wifi
+      char message_buffer[MAX_CURLY_COMMAND];
+      sprintf_P(message_buffer, PSTR("{WS:%s}{WP:%s}"), WIFI_SSID, WIFI_PWD);
+      write_to_lcd(message_buffer);
+    #endif
   }
 
   void onIdle() {
@@ -100,6 +107,7 @@ namespace ExtUI {
 
   void onPrinterKilled(FSTR_P const error, FSTR_P const component) {
     set_lcd_error(error, component);
+    //write_to_lcd(F("{SYS:ERROR}"));
   }
 
   #if HAS_PID_HEATING
@@ -151,7 +159,7 @@ namespace ExtUI {
 
   void onPlayTone(const uint16_t, const uint16_t/*=0*/) {}
 
-  void onFilamentRunout(const extruder_t extruder) {}
+  void onFilamentRunout(const extruder_t extruder) { set_lcd_error(GET_TEXT_F(DGUS_MSG_FILAMENT_RUNOUT)); }
   void onUserConfirmRequired(const char * const) {}
 
   // For fancy LCDs include an icon ID, message, and translated button title
@@ -167,12 +175,12 @@ namespace ExtUI {
   #endif
 
   void onHomingStart() {}
-  void onHomingDone() {}
+  void onHomingDone() { }
 
   void onPrintDone() {}
   void onFactoryReset() {}
 
-  void onStoreSettings(char*) {}
+  void onStoreSettings(char*) { write_to_lcd(F("{TQ:100}")); }
   void onLoadSettings(const char*) {}
   void onPostprocessSettings() {}
   void onSettingsStored(const bool) {}
@@ -192,7 +200,7 @@ namespace ExtUI {
   #endif
 
   #if ENABLED(PREVENT_COLD_EXTRUSION)
-    void onSetMinExtrusionTemp(const celsius_t) {}
+    void onSetMinExtrusionTemp(const celsius_t) { set_lcd_error(GET_TEXT_F(MSG_HOTEND_TOO_COLD)); }
   #endif
 
   #if ENABLED(POWER_LOSS_RECOVERY)
@@ -221,6 +229,7 @@ namespace ExtUI {
   void onSteppersEnabled() {}
   void onAxisDisabled(const axis_t) {}
   void onAxisEnabled(const axis_t) {}
+
 }
 
 #endif // MALYAN_LCD
