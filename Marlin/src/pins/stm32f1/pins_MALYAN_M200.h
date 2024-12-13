@@ -34,7 +34,7 @@
 #endif
 
 // Prevents hanging from an extra watchdog init
-#define DISABLE_WATCHDOG_INIT
+// #define DISABLE_WATCHDOG_INIT
 
 // Assume Flash EEPROM
 #if NO_EEPROM_SELECTED
@@ -96,3 +96,6 @@
 // JP Header
 #define UART2_TX_PIN                        PA2
 #define UART2_RX_PIN                        PA3
+
+// Servo
+#define SERVO0_PIN                 UART2_TX_PIN
