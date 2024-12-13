@@ -31,7 +31,6 @@
  * Added to Marlin for Mini/Malyan M200
  * Unknown commands as of Jan 2018: {H:}
  * Not currently implemented:
- * {E:} when sent by LCD. Meaning unknown.
  *
  * Notes for connecting to boards that are not Malyan:
  * The LCD is 3.3v, so if powering from a RAMPS 1.4 board or
@@ -45,7 +44,7 @@
 
 #if ENABLED(MALYAN_LCD)
 
-//#define DEBUG_MALYAN_LCD
+#define DEBUG_MALYAN_LCD
 
 #include "malyan.h"
 #include "../ui_api.h"
@@ -61,11 +60,6 @@
 
 #define DEBUG_OUT ENABLED(DEBUG_MALYAN_LCD)
 #include "../../../core/debug_out.h"
-
-// This is based on longest sys command + a filename, plus some buffer
-// in case we encounter some data we don't recognize
-// There is no evidence a line will ever be this long, but better safe than sorry
-#define MAX_CURLY_COMMAND (32 + LONG_FILENAME_LENGTH) * 2
 
 // Track incoming command bytes from the LCD
 uint16_t inbound_count;
@@ -135,7 +129,7 @@ void process_lcd_c_command(const char *command) {
     case 'T':
       // Sometimes the LCD will send commands to turn off both extruder and bed, though
       // this should not happen since the printing screen is up. Better safe than sorry.
-      if (!print_job_timer.isRunning() || target_val > 0)
+      if (!print_job_timer.isRunning() || (target_val > 0 && target_val < HEATER_0_MAXTEMP ) )
         ExtUI::setTargetTemp_celsius(target_val, ExtUI::extruder_t::E0);
       break;
 
@@ -154,7 +148,7 @@ void process_lcd_c_command(const char *command) {
  * time remaining (HH:MM:SS). The UI can't handle displaying a second hotend,
  * but the stock firmware always sends it, and it's always zero.
  */
-void process_lcd_eb_command(const char *command) {
+void process_lcd_b_command(const char *command) {
   char elapsed_buffer[10];
   static uint8_t iteration = 0;
   duration_t elapsed;
@@ -185,7 +179,21 @@ void process_lcd_eb_command(const char *command) {
       write_to_lcd(message_buffer);
     } break;
 
-    default: DEBUG_ECHOLNPGM("UNKNOWN E/B COMMAND ", command);
+    default: DEBUG_ECHOLNPGM("UNKNOWN B COMMAND ", command);
+  }
+}
+
+/**
+ * Process an LCD 'E' command.
+ * it is unclear what this does, but the response is sent.
+ */
+void process_lcd_e_command(const char *command) {
+  switch (command[0]) {
+    case '0': {
+       write_to_lcd(F("{e:e}"));
+    } break;
+
+    default: DEBUG_ECHOLNPGM("UNKNOWN E COMMAND ", command);
   }
 }
 
@@ -205,15 +213,93 @@ void j_move_axis(const char *command, const T axis) {
   ExtUI::setAxisPosition_mm(ExtUI::getAxisPosition_mm(axis) + dist, axis);
 };
 
+
 void process_lcd_j_command(const char *command) {
   switch (command[0]) {
-    case 'E': break;
+    case 'E': { // Disable Motors
+      if(ExtUI::isPrinting()) {
+        ExtUI::stopPrint();
+      } 
+      queue.enqueue_now_P("G90");
+      queue.enqueue_now_P("M18");      
+    } break;
+    case 'B':
     case 'A': j_move_axis<ExtUI::extruder_t>(command, ExtUI::extruder_t::E0); break;
     case 'Y': j_move_axis<ExtUI::axis_t>(command, ExtUI::axis_t::Y); break;
     case 'Z': j_move_axis<ExtUI::axis_t>(command, ExtUI::axis_t::Z); break;
     case 'X': j_move_axis<ExtUI::axis_t>(command, ExtUI::axis_t::X); break;
     default: DEBUG_ECHOLNPGM("UNKNOWN J COMMAND ", command);
   }
+}
+
+
+/**
+ * Process an LCD 'M' command.
+ * V2/V3 (Pro) LCDs 
+ * 
+ * These are currently all Z offsets commands.
+ * The command portion begins after the :
+ *
+ * Request current Z offset
+ * {M:999}
+ * 
+ * Set offset:
+ * {M:025}
+ * 
+ */
+void process_lcd_m_command(const char *command) {
+  float f;
+  uint16_t target_val = command ? atoi(command) : -1;
+
+  #if HAS_BED_PROBE
+    if(target_val>=999)
+    {
+      f=(-ExtUI::getProbeOffset_mm(ExtUI::axis_t::Z)*100); 
+      target_val=f;
+      char message_buffer[MAX_CURLY_COMMAND];
+      sprintf_P(message_buffer, PSTR("{M:%03i}"), target_val);
+      write_to_lcd(message_buffer);
+    }
+    else{
+      f=-target_val*0.01;
+        if (PROBE_OFFSET_ZMIN <= f && f <= PROBE_OFFSET_ZMAX) {
+          // ExtUI::setProbeOffset_mm(f, ExtUI::axis_t::Z);
+        }
+    }
+  #endif
+}
+
+/**
+ * Process an LCD 'V' command.
+ * This command appears to be all related to the version
+ * The command takes into account an unlocked varialbe which
+ * is not apparent yet.
+ * 
+ * Request version:
+ * {V:0}
+ * Printer responds with:
+ * {VER:21} 
+ * */
+void process_lcd_v_command(const char *command) {
+    DEBUG_ECHOLNPGM("V COMMAND ", command);
+    // send a version that says "unlocked" (not 0.0)
+    write_to_lcd(F("{VER:58}"));
+}
+
+/**
+ * Process an LCD 'W' command.
+ * This command appears to be related to wifi connectivity
+ * 
+ * Request wifi credentials:
+ * {W:0}
+ * Printer responds with:
+ * {WS:ssid}{WP:pass} 
+ * */
+void process_lcd_w_command(const char *command) {
+    DEBUG_ECHOLNPGM("W COMMAND ", command);
+    char message_buffer[MAX_CURLY_COMMAND];
+    sprintf_P(message_buffer, PSTR("{WS:%s}{WP:%s}"), WIFI_SSID, WIFI_PWD);
+    write_to_lcd(message_buffer);
 }
 
 /**
@@ -254,7 +340,29 @@ void process_lcd_p_command(const char *command) {
         ExtUI::stopPrint();
         write_to_lcd(F("{SYS:STARTED}"));
         break;
-    case 'H': queue.enqueue_now_P(G28_STR); break; // Home all axes
+    case 'H': // Home all axes
+        queue.enqueue_now_P(G28_STR); 
+        queue.enqueue_now_P("M18");
+        queue.enqueue_now_P("M500");
+        queue.enqueue_now_P("M400"); 
+        break; 
+    case 'I': // Perform Auto Mesh leveling
+        queue.enqueue_now_P(G28_STR); 
+        queue.enqueue_now_P("G29 P1"); 
+        queue.enqueue_now_P("G29 P3"); 
+        queue.enqueue_now_P("G29 S0"); 
+        queue.enqueue_now_P("M500");
+        queue.enqueue_now_P("M400");
+        break; 
+    case 'M': // Set probe offsets
+        queue.enqueue_now_P("M565"); 
+        break; 
+    case 'C': // Calibrate
+        // ??
+        break; 
+    case 'Z': // Pause at Z
+        // ??
+        break;
     default: {
       #if HAS_MEDIA
         // Print file 000 - a three digit number indicating which
@@ -276,6 +384,15 @@ void process_lcd_p_command(const char *command) {
         else {
           char message_buffer[MAX_CURLY_COMMAND];
           sprintf_P(message_buffer, PSTR("{PRINTFILE:%s}"), card.longest_filename());
+
+          if(0==strcmp(card.filename, "firmware.bin"))
+          {
+            write_to_lcd(F("{E:UPDATING}"));
+            queue.enqueue_now_P("M997"); // Restart
+            return;
+          }
+
+          LCD_SERIAL.flush();
           write_to_lcd(message_buffer);
           write_to_lcd(F("{SYS:BUILD}"));
           card.openAndPrintFile(card.filename);
@@ -336,6 +453,56 @@ void process_lcd_s_command(const char *command) {
       #endif
     } break;
 
+    case 'S': break; // ?? related to endstops
+    case '3': { // Change serial speed      
+      write_to_lcd(F("{S:3}"));
+      write_to_lcd(F("{S:3}"));
+      while (LCD_SERIAL.connected()) { }
+      delay(100);      
+      LCD_SERIAL.end();
+      LCD_SERIAL.begin(1000000);
+
+    } break; 
+    case '4': { // Change serial speed      
+      write_to_lcd(F("{S:4}"));
+      write_to_lcd(F("{S:4}"));
+      while (LCD_SERIAL.connected()) { }
+      delay(100);      
+      LCD_SERIAL.end();
+      LCD_SERIAL.begin(2000000);
+    } break; 
+    case 'U': update_usb_status(true); break;
+    case 'E': write_to_lcd(F("{SYS:echo}")); break;
+    case 'C': LCD_SERIAL.flush(); break;
+    case 'F': {
+
+      int16_t totalHours = 0;
+      int16_t totalMinutes = 0;
+      int16_t buildHours = 0;
+      int16_t buildMinutes = 0;
+      int16_t filamentusedA = 0;
+      
+      // Printer Statistics 
+      #if ENABLED(PRINTCOUNTER)
+        printStatistics stats = print_job_timer.getStats();
+        totalHours = stats.printTime / 3600; // s to h
+        totalMinutes = (stats.printTime % 3600) / 60;  // s to m (remaining)     
+        filamentusedA = stats.filamentUsed / 1000; // mm to m
+      #endif
+
+      char message_buffer[MAX_CURLY_COMMAND];      
+      sprintf_P(message_buffer,
+        PSTR("{TU:%05i.%02i/%03i.%02i/%02i/%02i}"),
+        totalHours, // Total Hours
+        totalMinutes, // Total Minutes
+        buildHours, // Build Hours
+        buildMinutes, // Build Minutes
+        filamentusedA, // Filament Used E0 (A)
+        0  // Filament Used E1 (B)
+      );
+      write_to_lcd(message_buffer);
+    } break;
+
     default: DEBUG_ECHOLNPGM("UNKNOWN S COMMAND ", command);
   }
 }
@@ -356,10 +523,13 @@ void process_lcd_command(const char *command) {
     switch (command_code) {
       case 'S': process_lcd_s_command(current); break;
       case 'J': process_lcd_j_command(current); break;
+      case 'M': process_lcd_m_command(current); break;
       case 'P': process_lcd_p_command(current); break;
       case 'C': process_lcd_c_command(current); break;
-      case 'B':
-      case 'E': process_lcd_eb_command(current); break;
+      case 'B': process_lcd_b_command(current); break;
+      case 'E': process_lcd_e_command(current); break;
+      case 'V': process_lcd_v_command(current); break;
+      case 'W': process_lcd_w_command(current); break;
       default: DEBUG_ECHOLNPGM("UNKNOWN COMMAND ", command);
     }
   }

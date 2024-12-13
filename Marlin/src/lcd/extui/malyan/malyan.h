@@ -26,6 +26,12 @@
  */
 
 #include "../../../HAL/shared/Marduino.h"
+#include "../../../../Configuration_Secure.h"
+
+// This is based on longest sys command + a filename, plus some buffer
+// in case we encounter some data we don't recognize
+// There is no evidence a line will ever be this long, but better safe than sorry
+#define MAX_CURLY_COMMAND (32 + LONG_FILENAME_LENGTH) * 2
 
 // Track incoming command bytes from the LCD
 extern uint16_t inbound_count;
@@ -39,14 +45,19 @@ void write_to_lcd(const char * const cmsg);
 void set_lcd_error(FSTR_P const error, FSTR_P const component=nullptr);
 
 void process_lcd_c_command(const char *command);
-void process_lcd_eb_command(const char *command);
+void process_lcd_b_command(const char *command);
+void process_lcd_e_command(const char *command);
+
 
 template<typename T>
 void j_move_axis(const char *command, const T axis);
 
 void process_lcd_j_command(const char *command);
+void process_lcd_m_command(const char *command);
 void process_lcd_p_command(const char *command);
 void process_lcd_s_command(const char *command);
+void process_lcd_v_command(const char *command);
+void process_lcd_w_command(const char *command);
 void process_lcd_command(const char *command);
 
 void parse_lcd_byte(const byte b);

@@ -117,7 +117,6 @@
  * :[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
  */
 //#define SERIAL_PORT_2 1
-#define LCD_SERIAL_PORT 2
 //#define BAUDRATE_2 250000   // Enable to override BAUDRATE
 
 /**
@@ -3294,6 +3293,9 @@
 // Touch-screen LCD for Malyan M200/M300 printers
 //
 #define MALYAN_LCD
+#if ENABLED(MALYAN_LCD)
+  #define LCD_SERIAL_PORT 2
+#endif
 
 //
 // Touch UI for FTDI EVE (FT800/FT810) displays
