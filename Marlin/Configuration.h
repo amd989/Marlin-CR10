@@ -1910,10 +1910,10 @@
 #define Y_BED_SIZE 150
 
 // Travel limits (linear=mm, rotational=°) after homing, corresponding to endstop positions.
-#define X_MIN_POS -2
-#define Y_MIN_POS -1
+#define X_MIN_POS -10
+#define Y_MIN_POS 0
 #define Z_MIN_POS 0
-#define X_MAX_POS X_BED_SIZE
+#define X_MAX_POS X_BED_SIZE+10
 #define Y_MAX_POS Y_BED_SIZE
 #define Z_MAX_POS 150
 //#define I_MIN_POS 0
@@ -2241,7 +2241,7 @@
   //========================= Unified Bed Leveling ============================
   //===========================================================================
 
-  // #define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
+  #define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
 
   #define MESH_INSET 1              // Set Mesh bounds as an inset region of the bed
   #define GRID_MAX_POINTS_X 6      // Don't use more than 15 points per axis, implementation limited.
@@ -2793,7 +2793,7 @@
 //
 //  Set this option if CLOCKWISE causes values to DECREASE
 //
-// #define REVERSE_ENCODER_DIRECTION
+#define REVERSE_ENCODER_DIRECTION
 
 //
 // This option reverses the encoder direction for navigating LCD menus.
@@ -3128,7 +3128,8 @@
 // BigTreeTech Mini 12864 V1.0 / V2.0 is an alias for FYSETC_MINI_12864_2_1. Type A/B. NeoPixel RGB Backlight.
 // https://github.com/bigtreetech/MINI-12864
 //
-//#define BTT_MINI_12864
+#define BTT_MINI_12864
+#define NO_CONTROLLER_CUSTOM_WIRING_WARNING
 
 //
 // BEEZ MINI 12864 is an alias for FYSETC_MINI_12864_2_1. Type A/B. NeoPixel RGB Backlight.
@@ -3292,7 +3293,7 @@
 //
 // Touch-screen LCD for Malyan M200/M300 printers
 //
-#define MALYAN_LCD
+// #define MALYAN_LCD
 #if ENABLED(MALYAN_LCD)
   #define LCD_SERIAL_PORT 2
 #endif
@@ -3647,9 +3648,9 @@
 #endif
 
 // Support for Adafruit NeoPixel LED driver
-// #define NEOPIXEL_LED
+#define NEOPIXEL_LED
 #if ENABLED(NEOPIXEL_LED)
-  #define NEOPIXEL_TYPE          NEO_GRB // NEO_GRBW, NEO_RGBW, NEO_GRB, NEO_RBG, etc.
+  #define NEOPIXEL_TYPE          NEO_RGB // NEO_GRBW, NEO_RGBW, NEO_GRB, NEO_RBG, etc.
                                           // See https://github.com/adafruit/Adafruit_NeoPixel/blob/master/Adafruit_NeoPixel.h
   //#define NEOPIXEL_PIN                4 // LED driving pin
   //#define NEOPIXEL2_TYPE  NEOPIXEL_TYPE
