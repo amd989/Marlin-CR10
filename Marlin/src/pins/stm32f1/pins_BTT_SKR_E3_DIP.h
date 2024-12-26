@@ -294,8 +294,8 @@
     #define DOGLCD_A0                EXP1_07_PIN
     #define DOGLCD_CS                EXP1_08_PIN
 
-    #define DOGLCD_SCK                      PA2
-    #define DOGLCD_MOSI                     PA3
+    #define DOGLCD_SCK                    TFT_03
+    #define DOGLCD_MOSI                   TFT_02
 
     #define LCD_BACKLIGHT_PIN               -1
     #define FORCE_SOFT_SPI
